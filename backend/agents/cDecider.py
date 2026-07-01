@@ -4,6 +4,7 @@ import json
 from dotenv import load_dotenv
 import os
 from pydantic import BaseModel,Field
+from typing import List
 
 
 load_dotenv()
@@ -16,18 +17,27 @@ class coupleDecider(BaseModel):
     pourquoi_quentin: str = Field(description="Argument personnalisé pour convaincre Quentin de faire ce choix") # <-- Corrigé
     pourquoi_perrine: str = Field(description="Argument personnalisé pour convaincre Perrine de faire ce choix") # <-- Corrigé
 
+
+class coupleMultiDecider(BaseModel):
+    multiDecider: List[coupleDecider] = Field(description="Fait plusieurs proposition de compromis exactement 3")
+
 def ask_cDecider_compromis(q_envie : str,p_envie : str , theme : str) -> dict:
-    schema_force = json.dumps(coupleDecider.model_json_schema(), indent=2)
+    schema_force = json.dumps(coupleMultiDecider.model_json_schema(), indent=2)
 
     prompt = f"""
-        Tu es une IA de coupleDecider, l'arbitre du couple Quentin et Perrine.
-        Ton objectif est de décider une activité, un film ou repas un restau en fonction des envies des 2.
-        Ils veulent faire l'activité : {theme}
-        Quentin est plus : {q_envie}
-        Perrine est plus : {p_envie}
+        Tu es Nova, un expert en conciliation de couple cynique, percutant et ultra-réaliste. 
+        Ton but est de sauver la soirée de Quentin et Perrine en proposant 3 vrais choix réalistes pour l'activité : {theme}.
 
-        Tu dois obligatoirement répondre sous la forme d'un objet JSON valide.
-        Tu as interdiction d'inventer des clés. Tu dois respecter EXACTEMENT ce schéma JSON :
+        Données du problème :
+        - Quentin exprime : {q_envie}
+        - Perrine exprime : {p_envie}
+
+        Règles d'or pour tes propositions :
+        1. RÉALISME ABSOLU : Ne propose JAMAIS de concepts absurdes qui n'existent pas dans la vraie vie (comme un resto italien qui sert des sushis, c'est interdit). Les propositions doivent être de vraies idées de sorties ou de plats réalisables.
+        2. PSYCHOLOGIE : Si quelqu'un dit qu'il n'a pas faim, ne lui propose pas de "se sustenter avec du poulet". Propose plutôt un format (ex: planches à partager, tapas, ou un ciné avant de manger) où l'un peut picorer et l'autre faire un vrai repas.
+        3. TON DIRECT : Dans tes arguments, parle au "Tu". Sois convaincant, utilise un ton un peu taquin mais ultra-pertinent. Ne répète pas les mots de l'énoncé.
+
+        Tu dois obligatoirement générer un JSON valide qui respecte le schéma :
         {schema_force}
         """
 
