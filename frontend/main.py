@@ -44,6 +44,7 @@ if st.session_state.p_confirm and st.session_state.q_confirm:
     with st.spinner("🔮 Nova épluche vos critères et prépare l'arbitrage..."):
         # On récupère le dictionnaire Python généré par ton agent
         resultat = decider.ask_cDecider_compromis(quentin_envie, perrine_envie, option)
+        print (resultat)
 
     st.success("### 🎉 Vos réponses ont été envoyées avec succès !")
     st.divider()  # Ligne de séparation
